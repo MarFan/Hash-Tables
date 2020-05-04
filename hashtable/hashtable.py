@@ -16,6 +16,9 @@ class HashTable:
 
     Implement this.
     """
+    def __init__(self, storage, capacity=2):
+        self.capacity = capacity
+        self.storage = [None] * capacity
 
     def fnv1(self, key):
         """
@@ -23,6 +26,14 @@ class HashTable:
 
         Implement this, and/or DJB2.
         """
+
+        prime = 1099511628211
+        hash = 14695981039346656037
+
+        for i in key:           
+            hash = hash * prime
+            hash = hash ^ ord(i)
+        return hash
 
     def djb2(self, key):
         """
@@ -36,8 +47,8 @@ class HashTable:
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
-        return self.djb2(key) % self.capacity
+        return self.fnv1(key) % self.capacity
+        #return self.djb2(key) % self.capacity
 
     def put(self, key, value):
         """
@@ -47,6 +58,8 @@ class HashTable:
 
         Implement this.
         """
+        index = self.hash_index(key)
+        self.storage[index] = HashTableEntry(key, value)
 
     def delete(self, key):
         """
@@ -56,6 +69,12 @@ class HashTable:
 
         Implement this.
         """
+        index = self.hash_index(key)
+        node
+        if self.storage[index] is not None:
+            self.storage[index] = None
+        else:
+            print('index not found')
 
     def get(self, key):
         """
@@ -65,6 +84,8 @@ class HashTable:
 
         Implement this.
         """
+        index = self.hash_index(key)
+        return self.storage[index].value
 
     def resize(self):
         """
@@ -73,6 +94,7 @@ class HashTable:
 
         Implement this.
         """
+
 
 if __name__ == "__main__":
     ht = HashTable(2)
