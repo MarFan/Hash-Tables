@@ -58,20 +58,20 @@ class HashTable:
 
         Implement this.
         """
-        # index = self.hash_index(key)      
-        # self.storage[index] = HashTableEntry(key, value)
+        index = self.hash_index(key)      
+        self.storage[index] = HashTableEntry(key, value)
 
-        index = self.hash_index(key)
-        if self.storage[index] is not None:
-            for n in self.storage[index]:
-                if n[0] == key:
-                    n[1] = value
-            else:
-                self.storage[index].append([key, value])
+        # index = self.hash_index(key)
+        # if self.storage[index] is not None:
+        #     for n in self.storage[index]:
+        #         if n[0] == key:
+        #             n[1] = value
+        #     else:
+        #         self.storage[index].append([key, value])
             
-        else:
-            self.storage[index] = []
-            self.storage[index].append([key, value])
+        # else:
+        #     self.storage[index] = []
+        #     self.storage[index].append([key, value])
 
 
     def delete(self, key):
@@ -97,13 +97,17 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        if self.storage[index] is None:
-            return None
-        else:
-            for n in self.storage[index]:
-                if n[0] == key:
-                    return n[1]
-            return None
+        return self.storage[index].value
+        
+        # if self.storage[index] is None:
+        #     return None
+        # else:
+        #     for n in self.storage[index]:
+        #         if n[0] == key:
+        #             return n[1]
+        #     return None
+
+
         # if self.storage[index] is not None:
         #     for kvp in self.storage[index]:
         #         if kvp[0] == key:
