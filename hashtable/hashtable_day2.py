@@ -16,9 +16,11 @@ class HashTable:
 
     Implement this.
     """
-    def __init__(self, storage, capacity=2):
+    def __init__(self, capacity=2, storage=None, counter=0):
         self.capacity = capacity
         self.storage = [None] * capacity
+        self.counter = counter
+        self.load = self.counter / self.capacity
 
     def fnv1(self, key):
         """
@@ -63,24 +65,26 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        pos = self.storage[index]
+        pos = self.storage[index]        
 
-
+        if self.load > 0.7:
+            self.resize()
 
         if pos is None:
             self.storage[index] = HashTableEntry(key, value)
             return
 
         prev = pos
-
+        
         while pos is not None:
             if pos.key == key:
                 pos.value = value
                 return 
-            
+
             prev = pos
             pos = pos.next
 
+        self.counter += 1
         prev.next = HashTableEntry(key, value)
 
 
@@ -103,12 +107,12 @@ class HashTable:
         if cur is None:
             return None
         else:
-            final = cur.value
+            self.counter -= 1
             if prev is None:
                 self.storage[index] = cur.next
             else:
                 prev.next = prev.next.next
-            return final
+            return
 
     def get(self, key):
         """
@@ -132,22 +136,56 @@ class HashTable:
         else:
             return pos.value                   
 
-    def resize(self):
+    def len(self):
+        return self.counter
+
+    def resize(self, newSize):
         """
         Doubles the capacity of the hash table and
         rehash all key/value pairs.
 
         Implement this.
         """
+        #if (self.counter / self.capacity) > 0.7:
+        
+        cur_hash = self.storage
+        self.capacity = self.capacity * 2
+        self.storage = [None] * self.capacity * 2
+
+        for item in cur_hash:
+            if item is not None:
+                # print(item.key, item.value)
+                while item is not None:
+                    self.put(item.key, item.value)
+                    item = item.next
+        print(self.capacity)
+        # if self.load < .2:
+        #     cur_hash = self.storage
+        #     self.capacity = self.capacity // 2
+        #     self.storage = [None] * self.capacity * 2
+
+        #     for item in cur_hash:
+        #         if item is not None:
+        #             while item is not None:
+        #                 self.put(item.key, item.value)
+        #                 item = item.next
+
+        return
 
 
 if __name__ == "__main__":
-    ht = HashTable(2)
+    ht = HashTable(8)
 
     ht.put("line_1", "Tiny hash table")
     ht.put("line_2", "Filled beyond capacity")
     ht.put("line_3", "Linked list saves the day!")
-
+    ht.put("line_4", "Tiny hash table")
+    ht.put("line_5", "Filled beyond capacity")
+    ht.put("line_6", "Linked list saves the day!")
+    ht.put("line_7", "Tiny hash table")
+    ht.put("line_8", "Linked list saves the day!")
+    ht.put("line_9", "Tiny hash table")
+    
     print("")
 
     # Test storing beyond capacity
@@ -168,3 +206,5 @@ if __name__ == "__main__":
     print(ht.get("line_3"))
 
     print("")
+
+    print(ht.len())
