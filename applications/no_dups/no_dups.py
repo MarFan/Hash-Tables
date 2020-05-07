@@ -1,6 +1,16 @@
 def no_dups(s):
     # Implement me.
+    if len(s):
+    	word_string = ""
 
+    	for w in s.split():
+	    	if w not in word_string:
+	    		if len(word_string):
+	    			word_string += " "
+	    		
+	    		word_string += w
+
+    	return word_string
 
 if __name__ == "__main__":
     print(no_dups(""))
