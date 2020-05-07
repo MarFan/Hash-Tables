@@ -5,16 +5,15 @@ def word_count(s):
 
     word_cache = {}
 
-    for w in s.split():
-    	if len(w) is None:
-    		return	
-    	
-    	word = re.sub('[^A-Za-z\']+', '', w).lower()
-    	
-    	if word not in word_cache:
-    		word_cache[word] = 1
-    	else:
-    		word_cache[word] += 1
+    if len(s.split()):
+        for w in s.split():
+            word = re.sub('[^A-Za-z\']+', '', w).lower()
+
+            if len(word):
+                if word not in word_cache:
+                    word_cache[word] = 1
+                else:
+                    word_cache[word] += 1
     
     return word_cache
 
