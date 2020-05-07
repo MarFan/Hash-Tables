@@ -68,7 +68,7 @@ class HashTable:
         pos = self.storage[index]        
 
         if self.load > 0.7:
-            self.resize()
+            self.resize(self.capacity * 2)
 
         if pos is None:
             self.storage[index] = HashTableEntry(key, value)
@@ -139,7 +139,7 @@ class HashTable:
     def len(self):
         return self.counter
 
-    def resize(self, newSize):
+    def resize(self, capacity):
         """
         Doubles the capacity of the hash table and
         rehash all key/value pairs.
@@ -147,10 +147,15 @@ class HashTable:
         Implement this.
         """
         #if (self.counter / self.capacity) > 0.7:
-        
+        # print(capacity)
+        # if capacity is not None:
+        #     self.capacity = capacity
+        #     self.storage = [None] * self.capacity
+        # else:
+        print(capacity)
         cur_hash = self.storage
-        self.capacity = self.capacity * 2
-        self.storage = [None] * self.capacity * 2
+        self.capacity = capacity
+        self.storage = [None] * capacity
 
         for item in cur_hash:
             if item is not None:
@@ -158,7 +163,8 @@ class HashTable:
                 while item is not None:
                     self.put(item.key, item.value)
                     item = item.next
-        print(self.capacity)
+
+        # print(self.capacity)
         # if self.load < .2:
         #     cur_hash = self.storage
         #     self.capacity = self.capacity // 2
