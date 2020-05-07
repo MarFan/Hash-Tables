@@ -68,7 +68,7 @@ class HashTable:
         pos = self.storage[index]        
 
         if self.load > 0.7:
-            self.resize(self.capacity * 2)
+            self.resize(self.capacity * 2) # double capacity, if needing to grow
 
         if pos is None:
             self.storage[index] = HashTableEntry(key, value)
@@ -146,13 +146,6 @@ class HashTable:
 
         Implement this.
         """
-        #if (self.counter / self.capacity) > 0.7:
-        # print(capacity)
-        # if capacity is not None:
-        #     self.capacity = capacity
-        #     self.storage = [None] * self.capacity
-        # else:
-        print(capacity)
         cur_hash = self.storage
         self.capacity = capacity
         self.storage = [None] * capacity
@@ -163,18 +156,6 @@ class HashTable:
                 while item is not None:
                     self.put(item.key, item.value)
                     item = item.next
-
-        # print(self.capacity)
-        # if self.load < .2:
-        #     cur_hash = self.storage
-        #     self.capacity = self.capacity // 2
-        #     self.storage = [None] * self.capacity * 2
-
-        #     for item in cur_hash:
-        #         if item is not None:
-        #             while item is not None:
-        #                 self.put(item.key, item.value)
-        #                 item = item.next
 
         return
 
