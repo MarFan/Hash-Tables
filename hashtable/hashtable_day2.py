@@ -16,9 +16,11 @@ class HashTable:
 
     Implement this.
     """
-    def __init__(self, storage, capacity=2):
+    def __init__(self, capacity=2, storage=None, counter=0):
         self.capacity = capacity
         self.storage = [None] * capacity
+        self.counter = counter
+        self.load = self.counter / self.capacity
 
     def fnv1(self, key):
         """
@@ -41,14 +43,18 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
+        hash_value = 5381
+        for byte in key.encode('utf-8'):
+            hash_value = ((hash_value * 33) + hash_value) + byte # hash * 33 + byte
+        return hash_value
 
     def hash_index(self, key):
         """
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        return self.fnv1(key) % self.capacity
-        #return self.djb2(key) % self.capacity
+        #return self.fnv1(key) % self.capacity
+        return self.djb2(key) % self.capacity
 
     def put(self, key, value):
         """
@@ -58,20 +64,28 @@ class HashTable:
 
         Implement this.
         """
-        index = self.hash_index(key)      
-        self.storage[index] = HashTableEntry(key, value)
+        index = self.hash_index(key)
+        pos = self.storage[index]        
 
-        # index = self.hash_index(key)
-        # if self.storage[index] is not None:
-        #     for n in self.storage[index]:
-        #         if n[0] == key:
-        #             n[1] = value
-        #     else:
-        #         self.storage[index].append([key, value])
-            
-        # else:
-        #     self.storage[index] = []
-        #     self.storage[index].append([key, value])
+        if self.load > 0.7:
+            self.resize(self.capacity * 2) # double capacity, if needing to grow
+
+        if pos is None:
+            self.storage[index] = HashTableEntry(key, value)
+            return
+
+        prev = pos
+        
+        while pos is not None:
+            if pos.key == key:
+                pos.value = value
+                return 
+
+            prev = pos
+            pos = pos.next
+
+        self.counter += 1
+        prev.next = HashTableEntry(key, value)
 
 
     def delete(self, key):
@@ -83,10 +97,22 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        if self.storage[index] is not None:
-            self.storage[index] = None
+        cur = self.storage[index]
+        prev = None
+
+        while cur is not None and cur.key != key:
+            prev = cur
+            cur = cur.next
+
+        if cur is None:
+            return None
         else:
-            print('index not found')
+            self.counter -= 1
+            if prev is None:
+                self.storage[index] = cur.next
+            else:
+                prev.next = prev.next.next
+            return
 
     def get(self, key):
         """
@@ -97,46 +123,56 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        return self.storage[index].value
-        
-        # if self.storage[index] is None:
-        #     return None
-        # else:
-        #     for n in self.storage[index]:
-        #         if n[0] == key:
-        #             return n[1]
-        #     return None
+        pos = self.storage[index]
 
-
-        # if self.storage[index] is not None:
-        #     for kvp in self.storage[index]:
-        #         if kvp[0] == key:
-        #             kvp[1] = value
-        #             break
-        #         else:
-        #             self.storage[index].append([key, value])
-        #     return self.storage[index].value
-        # else:
-        #     self.storage[index] = []
-        #     self.storage[index].append([key, value])
+        while pos is not None:
+            if pos.key == key:
+                return pos.value
             
+            pos = pos.next
 
-    def resize(self):
+        if pos is None:
+            return None
+        else:
+            return pos.value                   
+
+    def len(self):
+        return self.counter
+
+    def resize(self, capacity):
         """
         Doubles the capacity of the hash table and
         rehash all key/value pairs.
 
         Implement this.
         """
+        cur_hash = self.storage
+        self.capacity = capacity
+        self.storage = [None] * capacity
+
+        for item in cur_hash:
+            if item is not None:
+                # print(item.key, item.value)
+                while item is not None:
+                    self.put(item.key, item.value)
+                    item = item.next
+
+        return
 
 
 if __name__ == "__main__":
-    ht = HashTable(2)
+    ht = HashTable(8)
 
     ht.put("line_1", "Tiny hash table")
     ht.put("line_2", "Filled beyond capacity")
     ht.put("line_3", "Linked list saves the day!")
-
+    ht.put("line_4", "Tiny hash table")
+    ht.put("line_5", "Filled beyond capacity")
+    ht.put("line_6", "Linked list saves the day!")
+    ht.put("line_7", "Tiny hash table")
+    ht.put("line_8", "Linked list saves the day!")
+    ht.put("line_9", "Tiny hash table")
+    
     print("")
 
     # Test storing beyond capacity
@@ -157,3 +193,5 @@ if __name__ == "__main__":
     print(ht.get("line_3"))
 
     print("")
+
+    print(ht.len())
